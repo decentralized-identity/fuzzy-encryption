@@ -9,19 +9,17 @@ Fuzzy Encryption for Secret Recovery project is an approach to provide an altern
 
 ## Table of Contents
 
-- [Fuzzy Encryption for Secret Recovery](#fuzzy-encryption-for-secret-recovery)
-  - [Table of Contents](#table-of-contents)
-  - [Installation](#installation)
-      - [Clone](#clone)
-      - [Setup](#setup)
-  - [Documentation](#documentation)
-    - [Understanding the code...](#understanding-the-code)
-      - [InputParams (Class):](#inputparams-class)
-      - [FuzzyState (Class):](#fuzzystate-class)
-      - [GenerateSecret (Function):](#generatesecret-function)
-      - [RecoverSecret (Function):](#recoversecret-function)
-    - [Tests and Demos](#tests-and-demos)
-  - [Dependencies](#dependencies)
+- [Installation](#installation)
+    - [Clone](#clone)
+    - [Setup](#setup)
+- [Documentation](#documentation)
+  - [Understanding the code...](#understanding-the-code)
+    - [InputParams (Class):](#inputparams-class)
+    - [FuzzyState (Class):](#fuzzystate-class)
+    - [GenerateSecret (Function):](#generatesecret-function)
+    - [RecoverSecret (Function):](#recoversecret-function)
+  - [Tests and Demos](#tests-and-demos)
+- [Dependencies](#dependencies)
 
 ---
 
@@ -35,28 +33,34 @@ You will need to clone this repo to your local machine. If you don't have git in
 $ sudo apt update 
 $ sudo apt install git
 ```
-#### Clone
 
-Clone this repo to your local machine using *(insert Git URL here: not sure what we want to use)* by typing the following in command line:
+#### Clone and Setup
 
-```shell
-$ git clone ? Fuzzy-KeyRecovery
+Clone this repo to your local machine.
+<br/>
+Next, in order to install all needed dependencies before running or testing this program, you will need to run the bash script [install.sh](./install.sh).
+If you're currently in the local directory where it resides, type the following in command line, otherwise replace with the correct PATH to [install.sh](./install.sh):
+
+```bash
+$ ./install.sh
 ```
-#### Setup
 
-Next, in order to install all needed dependencies before running or testing this program, you will need to run the bash script [install.sh](Fuzzy-KeyRecovery/dev/install.sh). Use [install.md](install.md) for detailed instructions on how to do so.
+If you receive the  <span style="color:red">error</span> below: 
 
-To navigate to the local directory for `install.sh`, type the following in command line:
+**-bash: ./install.sh: Permission denied**
 
-```shell
-$ cd Fuzzy-KeyRecovery/dev/
+then you will need to change mode first, type the following in command line before retrying the previous step:
+
+```bash
+$ chmod +x ./install.sh
 ```
+*Provide password for root access if asked, give permission for memory space usage and wait for the installations to complete, please note that this might take a while...*
 
 ---
 ## Documentation
 
 ### Understanding the code...
-*We'll discuss some of the main classes and functions used in [fuzzy.py](/Fuzzy-KeyRecovery/dev/kirko/pseudocode/python/fuzzy.py) to generate and recover cryptographic keys using the user's pass-phrase.*
+*We'll discuss some of the main classes and functions used in [fuzzy.py](./fuzzy.py) to generate and recover cryptographic keys using the user's pass-phrase.*
 
 #### InputParams (Class):
 This class intializes all input parameters used by `GenerateSecret()`, these parameters are:
