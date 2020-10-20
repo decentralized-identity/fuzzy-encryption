@@ -102,3 +102,7 @@ dist
 
 # TernJS port file
 .tern-port
+
+# Ignore Python generated directories
+
+src/python/__pycache__/
