@@ -21,7 +21,7 @@ import sympy                                        # type: ignore
 from flint import nmod_poly, nmod_mat, nmod         # type: ignore
 import gauss
 
-SetSize = int
+setSize = int
 Prime = int
 ErrorThreshold = int
 CorrrectThreshold = int
@@ -79,23 +79,23 @@ class InputParams:
 
     Contents:
 
-        setsize -- This is the number of words required for establishing
+        setSize -- This is the number of words required for establishing
                    the intial secret and for recovering the secret.
                    This is specfied by the user.
 
-        correctthreshold -- this is the minumum number of words that
+        correctThreshold -- this is the minumum number of words that
             that must be correctly guessed in order to successfully
             recover the secret. This must be greater than half
-            of the number of words (setsize). This is specified by the user.
+            of the number of words (setSize). This is specified by the user.
 
-        corpus_size -- This is the size of the set of allowed words.
+        corpusSize -- This is the size of the set of allowed words.
             This means that both the origial words and recovery words
-            must be represented by integers in the range 0 .. (corpus_size - 1).
+            must be represented by integers in the range 0 .. (corpusSize - 1).
             This is specified by the user.
 
-        prime -- This a prime number (p) such that setsize < p < 2 * setsize
+        prime -- This a prime number (p) such that setSize < p < 2 * setSize
             The user does not set this number, instead it is derived from
-            the corpus_size which is specfied by the user.
+            the corpusSize which is specfied by the user.
 
         salt -- an array of bytes serving as a user specific salt
             to slow down brute force attacks. Created
@@ -106,44 +106,44 @@ class InputParams:
             specified by the user.
     """
     def __init__(self,
-                 setsize: int,
-                 correctthreshold: int,
-                 corpus_size: int,
+                 setSize: int,
+                 correctThreshold: int,
+                 corpusSize: int,
                  empty=False):
         """
         FuzzyState object constructor. Only three parameters are specified
         by the caller.
-            setsize -- The number of original words and recovery words.
-            correctthreshold -- The minimum number of matches between
+            setSize -- The number of original words and recovery words.
+            correctThreshold -- The minimum number of matches between
                 the original words and recovery words needed to
                 recover the keys.
-            corpus_size -- This is the size of the set of words available
+            corpusSize -- This is the size of the set of words available
                 for the original and recovery words. Word are represented
-                as integers in the range 0 .. (corpus_size - 1)
+                as integers in the range 0 .. (corpusSize - 1)
         """
         if empty:
             return
-        if setsize < 0:
+        if setSize < 0:
             raise FuzzyError("bad size")
-        if correctthreshold < 1 or 2 * correctthreshold <= setsize:
-            raise FuzzyError("bad correctthreshold")
+        if correctThreshold < 1 or 2 * correctThreshold <= setSize:
+            raise FuzzyError("bad correctThreshold")
 
-        self.setsize: SetSize = setsize
-        self.correctthreshold: CorrrectThreshold = correctthreshold
-        self.corpus_size: int = corpus_size
-        self.prime: Prime = first_prime_greater_than(corpus_size)
+        self.setSize: setSize = setSize
+        self.correctThreshold: CorrrectThreshold = correctThreshold
+        self.corpusSize: int = corpusSize
+        self.prime: Prime = first_prime_greater_than(corpusSize)
         self.salt: bytes = random_bytes(32)
         self.extractor: Extractor = \
-            list_of_unique_random_elements_from_fp(self.prime, setsize)
+            list_of_unique_random_elements_from_fp(self.prime, setSize)
 
     def __repr__(self) -> str:
         """
         Returns a string representing this object in JSON form
         """
         data = {
-            "setsize" : self.setsize,
-            "corpus_size" : self.corpus_size,
-            "correctthreshold" : self.correctthreshold,
+            "setSize" : self.setSize,
+            "corpusSize" : self.corpusSize,
+            "correctThreshold" : self.correctThreshold,
             "prime" : self.prime,
             "extractor" : self.extractor,
             "salt" : bytes_to_hex(self.salt),
@@ -162,9 +162,9 @@ class InputParams:
         """
         data = json.loads(repn)
         params = InputParams(0, 0, 0, True)
-        params.setsize = data['setsize']
-        params.corpus_size = data['corpus_size']
-        params.correctthreshold = data['correctthreshold']
+        params.setSize = data['setSize']
+        params.corpusSize = data['corpusSize']
+        params.correctThreshold = data['correctThreshold']
         params.prime = data['prime']
         params.extractor = data['extractor']
         params.salt = hex_to_bytes(data["salt"])
@@ -188,9 +188,9 @@ class FuzzyState:
 
     def __init__(self):
         'create an empty object'
-        self.corpus_size: int = 0
-        self.setsize: int = 0
-        self.correctthreshold: int = 0
+        self.corpusSize: int = 0
+        self.setSize: int = 0
+        self.correctThreshold: int = 0
         self.errorthreshold: int = 0
         self.prime: Prime = 0
         self.salt: bytes = b'0'
@@ -204,10 +204,10 @@ class FuzzyState:
         constructor
         """
         state = FuzzyState()
-        state.corpus_size = params.corpus_size
-        state.setsize = params.setsize
-        state.correctthreshold = params.correctthreshold
-        state.errorthreshold = 2 * (params.setsize - params.correctthreshold)
+        state.corpusSize = params.corpusSize
+        state.setSize = params.setSize
+        state.correctThreshold = params.correctThreshold
+        state.errorthreshold = 2 * (params.setSize - params.correctThreshold)
         state.prime = params.prime
         state.salt = params.salt
         state.extractor = params.extractor
@@ -226,7 +226,7 @@ class FuzzyState:
         aList = words
         aList.sort()
         e: nmod = nmod(1, self.prime)
-        for i in range(self.setsize):
+        for i in range(self.setSize):
             e *= sList[i] * aList[i]
         return scrypt.hash("key:" + str(e), self.salt)
 
@@ -243,9 +243,9 @@ class FuzzyState:
         Returns a string representing this object in JSON form
         """
         data = {
-            "setsize" : self.setsize,
-            "corpus_size" : self.corpus_size,
-            "correctthreshold" : self.correctthreshold,
+            "setSize" : self.setSize,
+            "corpusSize" : self.corpusSize,
+            "correctThreshold" : self.correctThreshold,
             "prime" : self.prime,
             "sketch" : self.sketch,
             "extractor" : self.extractor,
@@ -263,10 +263,10 @@ class FuzzyState:
         "Create a FuzzyState object from a string containing a JSON representation"
         data = json.loads(repn)
         state = FuzzyState()
-        state.setsize = data['setsize']
-        state.corpus_size = data['corpus_size']
-        state.correctthreshold = data['correctthreshold']
-        state.errorthreshold = 2 * (state.setsize - state.correctthreshold)
+        state.setSize = data['setSize']
+        state.corpusSize = data['corpusSize']
+        state.correctThreshold = data['correctThreshold']
+        state.errorthreshold = 2 * (state.setSize - state.correctThreshold)
         state.prime = data['prime']
         state.sketch = data['sketch']
         state.extractor = data['extractor']
@@ -305,16 +305,16 @@ def recover_words(state: FuzzyState, words: RecoveryWords) -> RecoveredWords:
     """
     Recover the words using the recovery words as a guess
     """
-    if len(words) != state.setsize:
-        raise FuzzyError("length of words is not equal to setsize")
-    p_high: nmod_poly = get_phigh(state.sketch, state.setsize, state.prime)
+    if len(words) != state.setSize:
+        raise FuzzyError("length of words is not equal to setSize")
+    p_high: nmod_poly = get_phigh(state.sketch, state.setSize, state.prime)
     a_coeffs: List[int] = words
     b_coeffs: List[int] = [p_high(a) for a in a_coeffs]
     p_low: nmod_poly = \
         Berlekamp_Welch(
             a_coeffs,
             b_coeffs,
-            state.setsize - state.errorthreshold,
+            state.setSize - state.errorthreshold,
             state.errorthreshold // 2,
             state.prime)
     p_diff: nmod_poly = p_high - p_low
@@ -489,18 +489,18 @@ def first_prime_greater_than(k: int) -> int:
         if isprime(k):
             return k
 
-def list_of_unique_random_elements_from_fp(prime: int, setsize: int) -> List[int]:
+def list_of_unique_random_elements_from_fp(prime: int, setSize: int) -> List[int]:
     """
-    returns a list of length "setsize" of random integers in the range 1 .. prime - 1
+    returns a list of length "setSize" of random integers in the range 1 .. prime - 1
     Called by the InputParams constructor
     """
     if prime < 2 or not isprime(prime):
         raise FuzzyError("p is not prime")
-    if setsize >= prime:
-        raise FuzzyError("setsize >= prime")
+    if setSize >= prime:
+        raise FuzzyError("setSize >= prime")
     alist = list(range(1, prime))   # create a list [1, 2, .., prime - 1]
     random.shuffle(alist)           # shuffle it
-    return alist[:setsize]          # return the lowest setsize members
+    return alist[:setSize]          # return the lowest setSize members
 
 def random_bytes(length: int) -> bytes:
     """
@@ -509,7 +509,7 @@ def random_bytes(length: int) -> bytes:
     """
     return secrets.token_bytes(length)
 
-def check_words(words: List[int], set_size: int, corpus_size: int):
+def check_words(words: List[int], set_size: int, corpusSize: int):
     """
     Check that the input words makes sense
     """
@@ -518,7 +518,7 @@ def check_words(words: List[int], set_size: int, corpus_size: int):
     if len(set(words)) != set_size:
         raise FuzzyError("words are not unique")
     for word in words:
-        if not 0 <= word < corpus_size:
+        if not 0 <= word < corpusSize:
             raise FuzzyError("word out of range")
 
 def GenerateSecret(
@@ -539,13 +539,13 @@ def GenerateSecret(
         params: This is an object that contains the necessary input.
 
         original_words: A list of unique of integers in the range
-            0 .. (corpus_size - 1) representing the secret words
+            0 .. (corpusSize - 1) representing the secret words
             needed to recover the keys
 
         key_count: The initial number of keys requested.
 
     """
-    check_words(original_words, params.setsize, params.corpus_size)
+    check_words(original_words, params.setSize, params.corpusSize)
     state = FuzzyState.Create(params, original_words)
     ek = state.get_ek(original_words)
     return state, [key_derivation(ek, k) for k in range(key_count)]
@@ -565,7 +565,7 @@ def RecoverSecret(
         state: The FuzzyState created by GenerateSecret
         recovery_words: A guess of the original words.
                         These are unique integers in the range
-                        0 .. corpus_size - 1
+                        0 .. corpusSize - 1
         key_count: The number of keys to be generated
 
     Output:
@@ -575,7 +575,7 @@ def RecoverSecret(
     This function will throw a FuzzyError exception if the keys
     cannot be recovered.
     """
-    check_words(recovery_words, state.setsize, state.corpus_size)
+    check_words(recovery_words, state.setSize, state.corpusSize)
     if state.hash == state.get_hash(recovery_words):
         ek = state.get_ek(recovery_words)
         return [key_derivation(ek, k) for k in range(key_count)]
