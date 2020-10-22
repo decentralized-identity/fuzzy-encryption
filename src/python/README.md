@@ -1,7 +1,7 @@
 # Fuzzy Encryption for Secret Recovery
 <br/>
 
-**WARNING: This implementation is for prototype and testing purposes only. DO NOT use in production, as this implementation WILL NOT be supported. Another implmentation of the Fuzzy Encryption scheme (written in C++) is under active development and will offer long-term production support after publication to this repository.**
+**NOTE: This implementation is code complete with full review and testing at the time of its contribution, but WILL NOT be supported long-term. Another implmentation of the Fuzzy Encryption scheme (written in C++) is under active development and WILL offer long-term support after publication to this repository.**
 
 **WARNING: This code relies on copyleft dependencies which may require special attention to use safely within commercial products. Please take care to ensure you are abiding by the license terms specified in these dependencies.**
 
