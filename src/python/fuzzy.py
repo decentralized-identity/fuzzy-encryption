@@ -1,5 +1,5 @@
 """
-This contains my attemmpt at creating a pythonic version
+This contains my attempt at creating a Python version
 of pseudocode for the key recovery project.
 
 There are two exports of general interest:
@@ -53,7 +53,7 @@ class FuzzyError(Exception):
 
 def bytes_to_hex(data: bytes) -> str:
     """
-    Return a hexidecimal string representation of an array of bytes
+    Return a hexadecimal string representation of an array of bytes
     where the string is made up of upper case hexadecimal
     characters. This function is the inverse of
     hex_to_bytes.
@@ -64,8 +64,8 @@ def bytes_to_hex(data: bytes) -> str:
 
 def hex_to_bytes(hex_repn: str) -> bytes:
     """
-    Convert a hexidecimal string representation of
-    a block of bytes into a Pyton bytes object.
+    Convert a hexadecimal string representation of
+    a block of bytes into a Python bytes object.
     This function is the inverse of bytes_to_hex.
 
     hex_to_bytes('F803') -> b'\xf8\x03'
@@ -80,22 +80,22 @@ class InputParams:
     Contents:
 
         setsize -- This is the number of words required for establishing
-                   the intial secret and for recovering the secret.
-                   This is specfied by the user.
+                   the initial secret and for recovering the secret.
+                   This is specified by the user.
 
-        correctthreshold -- this is the minumum number of words that
+        correctthreshold -- this is the minimum number of words that
             that must be correctly guessed in order to successfully
             recover the secret. This must be greater than half
             of the number of words (setsize). This is specified by the user.
 
         corpus_size -- This is the size of the set of allowed words.
-            This means that both the origial words and recovery words
+            This means that both the original words and recovery words
             must be represented by integers in the range 0 .. (corpus_size - 1).
             This is specified by the user.
 
         prime -- This a prime number (p) such that setsize < p < 2 * setsize
             The user does not set this number, instead it is derived from
-            the corpus_size which is specfied by the user.
+            the corpus_size which is specified by the user.
 
         salt -- an array of bytes serving as a user specific salt
             to slow down brute force attacks. Created
@@ -176,11 +176,11 @@ class FuzzyState:
     """
     State to be retained for recovering keys
 
-    This is what is sometimes refered to as the "payload". It is
+    This is what is sometimes referred to as the "payload". It is
     created at the time of the call to GenerateSecret. It is
     up to the caller to save this information in the form
     of a JSON file. This is easy to do since the string
-    represenation of this object, as returned by __repr__,
+    representation of this object, as returned by __repr__,
     is a string containing the JSON representation.
 
     This information is required by RecoverSecret
@@ -324,8 +324,8 @@ def recover_words(state: FuzzyState, words: RecoveryWords) -> RecoveredWords:
 
 def get_phigh(tlist: List[int], s: int, p: int) -> nmod_poly:
     """
-    return a polynomial object where the caller specfies the highest coefficents
-    except the highest cofficent which takes the value 1
+    return a polynomial object where the caller specifies the highest coefficients
+    except the highest coefficient which takes the value 1
     """
     nzeros: int = s - len(tlist)
     coeffs: List[int] = [0] * nzeros
@@ -498,7 +498,7 @@ def list_of_unique_random_elements_from_fp(prime: int, setsize: int) -> List[int
         raise FuzzyError("p is not prime")
     if setsize >= prime:
         raise FuzzyError("setsize >= prime")
-    alist = list(range(1, prime))   # create a list [1, 2, .., prime - 1]
+    alist = list(range(prime))      # create a list [0, 1, ... , prime - 1]
     random.shuffle(alist)           # shuffle it
     return alist[:setsize]          # return the lowest setsize members
 
