@@ -1,9 +1,0 @@
-click
-Crypto
-flint-py
-pyopenssl
-pytest
-jsonschema
-sympy
-hashids
-scrypt

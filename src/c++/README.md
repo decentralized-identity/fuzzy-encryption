@@ -106,7 +106,9 @@ that the build succeeded.
 
 ```
   cd ./src/scripts/android
-  sudo ./build.sh
+  sudo ./restore.sh
+  sudo ./build.sh 23 <debug|release>
+  sudo ./android_build.sh 23 <debug|release>
 ```
 
 <h2 id="api" style="color: rgb(0,0,0); background-color: rgb(192,192,192)">FuzzyVault APIs</h2>
