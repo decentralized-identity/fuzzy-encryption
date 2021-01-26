@@ -1,0 +1,20 @@
+#!/bin/bash
+
+runq "apt-get update"
+runq "apt-get upgrade"
+runq "apt-get dist-upgrade"
+runq "apt-get install man"
+runq "apt-get install wget"
+# run "apt install curl > /dev/null:
+runq "apt-get install perl"
+runq "apt-get install build-essential"
+runq "apt-get install git"
+runq "apt-get install python3"
+runq "apt-get install cmake"
+runq "apt-get install python3-pip"
+runq "apt-get install default-jre"
+install "wget"
+install "unzip"
+install "tar"
+install "npm"
+run "bash $COMMON_SCRIPTS_DIR/node-install.sh"

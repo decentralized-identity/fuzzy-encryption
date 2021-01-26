@@ -1,0 +1,8 @@
+{
+    "setSize": 9,
+    "corpusSize": 7776,
+    "correctThreshold": 6,
+    "prime": 7789,
+    "extractor": [ 67, 4012, 1657, 6910, 6730, 3480, 4674, 3710, 3586 ],
+    "salt": "5EE4975616255C5CAED6C99F3635FE4F22D351F7199AE2FA5101B3595CFDC396"
+}
