@@ -3,7 +3,7 @@
 **NOTE**: This implementation is code complete with full review and testing at the time of its contribution, but WILL NOT be supported long-term. 
 However, the C++ version will be supported long time.
 
-**WARNING**: This code relies on copyleft dependencies which may require special attention to use safely within commercial products. Please take care to ensure you are abiding by the license terms specified in these dependencies.
+**WARNING: This code relies on copyleft dependencies which may require special attention to use safely within commercial products. Please take care to ensure you are abiding by the license terms specified in these dependencies.**
 
 This document describes the Python demonstration code.
 
