@@ -106,3 +106,8 @@ dist
 # Ignore Python generated directories
 
 src/python/__pycache__/
+
+build_linux/
+prereq_build_linux/
+prereq_build_wasm/
+wasm_output_dir/

@@ -35,7 +35,7 @@ function dir_create {
 function install {
     runq "which ${1}"
     if [ $? -ne 0 ]; then
-        run "apt-get install ${1}"
+        run "apt-get install ${1} -y"
     else
         comment "    ${1} detected"
     fi
