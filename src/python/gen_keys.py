@@ -1,7 +1,7 @@
 """
-rec_secret.py
+gen_keys.py
 
-Recoveres a secret using the Fuzzy Key Recovery scheme
+Recovers a secret using the Fuzzy Key Recovery scheme
 """
 
 import click
@@ -41,11 +41,11 @@ def work(words, key_count, secret) -> None:
               help='path to JSON file holding the secret (FuzzyState)')
 def rec_secret(words, key_count, secret) -> None:
     """
-recover a secret
+generate keys from a secret
 
 example:
 
-python3 rec_secret.py --words "1 2 3" [--secret secret.json] [--key-count 1]
+python3 gen_keys.py --words "1 2 3" [--secret secret.json] [--key-count 1]
     """
     work(words, key_count, secret)
 
