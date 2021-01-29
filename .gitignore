@@ -112,3 +112,4 @@ prereq_build_linux/
 prereq_build_wasm/
 wasm_output_dir/
 build_android/
+.vscode/
