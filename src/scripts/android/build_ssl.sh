@@ -1,16 +1,25 @@
+#!/bin/bash
 #!/bin/sh
 
 set -e
+comment "build_ssh.sh"
+
+OPENSSL_DIR="${PWD}/openssl"
+
+runq "rm -rf openssl"
+run "git clone https://github.com/openssl/openssl.git"
+runq "cd ${OPENSSL_DIR}"
+runq "git checkout tags/openssl-3.0.0-${OPENSSL_MINOR_VERSION}"
+
 # ARGUMENTS 
 # Set this to your minSdkVersion.
 export API=$1
 export BUILD=$2
 
 if [ -z $API ]; then
-    echo "No API version was provided"
+    warning "No API version was provided"
     exit 1
 fi
-
 # androidtoolsdir
 # /opt/android-sdk
 
@@ -27,7 +36,7 @@ export PATH=$TOOLCHAIN/bin:$NDK/toolchains/arm-linux-androideabi-4.9/prebuilt/$H
 
 function buildLibraries {
     abi=$1
-    echo "Building $abi..."
+    comment "build_ssl.buildLibraries $abi"
     outputFolder=""
     if [[ $abi == "android-arm" ]]; then
         export TARGET=armv7a-linux-androideabi
@@ -42,7 +51,7 @@ function buildLibraries {
         export TARGET=x86_64-linux-android
         outputFolder="x86_64"
     else 
-        echo "Unknown ABI: $abi"
+        warning "Unknown ABI: $abi"
         return
     fi
 
@@ -61,27 +70,23 @@ function buildLibraries {
         debugArg="-d"
     fi
     
-    ./Configure $abi -D__ANDROID_API__="$API" $debugArg shared no-asm SYSROOT="$TOOLCHAIN/sysroot" -fstack-protector-strong
-    make clean
-    make update # needed to update libcrypto.map number bindings
-    git clean -f
-    make
+    runq "./Configure $abi -D__ANDROID_API__="$API" $debugArg shared no-asm SYSROOT="$TOOLCHAIN/sysroot" -fstack-protector-strong"
+    runq "make clean"
+    runq "make update"
+    runq "git clean -f"
+    runq "make"
 
-    if [[ $? != 0 ]]; then
-        echo "[ERROR] Make failed"
-        exit 1
-    fi
+    comment "Build successful."
 
-    echo "Build successful."
+    runq "mkdir -p ${ANDROID}/$outputFolder/lib"
+    runq "cp ./*.so ${ANDROID}/$outputFolder/lib"
+    runq "cp ./*.a ${ANDROID}/$outputFolder/lib"
+    runq "cp -r ./include ${ANDROID}/$outputFolder/"
 
-    mkdir -p /opt/fuzzy-lib/$outputFolder/lib
-    cp ./*.so /opt/fuzzy-lib/$outputFolder/lib
-    cp ./*.a /opt/fuzzy-lib/$outputFolder/lib
-    cp -r ./include /opt/fuzzy-lib/$outputFolder/
-
-    make clean
+    # runq "make clean"
 }
-cd openssl
+
+runq "cd ${OPENSSL_DIR}"
 
 buildLibraries android-arm
 buildLibraries android-x86_64

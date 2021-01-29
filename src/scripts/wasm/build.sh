@@ -1,5 +1,6 @@
 #!/bin/bash
 
+set -e
 clear
 
 export RED='\033[0;31m'

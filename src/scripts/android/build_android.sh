@@ -1,10 +1,17 @@
+#!/bin/bash
 #!/bin/sh
 
 set -e
+comment "build_android.sh"
+
 # ARGUMENTS 
 # Set this to your minSdkVersion.
 export API=$1
-export BUILD=$2
+export BuildType=$2
+
+if [ -z $BUILD_SOURCESDIRECTORY ]; then 
+    BUILD_SOURCESDIRECTORY='../../..'
+fi
 
 if [ -z $API ]; then
     echo "No API version was provided"
@@ -27,7 +34,7 @@ export PATH=$TOOLCHAIN/bin:$NDK/toolchains/arm-linux-androideabi-4.9/prebuilt/$H
 
 function buildLibraries {
     abi=$1
-    echo "Building $abi..."
+    comment "build_android.buildLibraries $abi"
     outputFolder=""
     if [[ $abi == "android-arm" ]]; then
         export TARGET=armv7a-linux-androideabi
@@ -56,32 +63,26 @@ function buildLibraries {
     # export STRIP=$TOOLCHAIN/bin/$TARGET-strip
     # export NM=$TOOLCHAIN/bin/$TARGET-nm
 
-    debugArg=""
-    if [[ $(echo "$BUILD" | tr '[:upper:]' '[:lower:]') == d*  ]]; then
-        debugArg="-d"
-    fi
-    
-    ./Configure $abi -D__ANDROID_API__="$API" $debugArg shared no-asm SYSROOT="$TOOLCHAIN/sysroot" -fstack-protector-strong
-    make clean
-    make update # needed to update libcrypto.map number bindings
-    git clean -f
-    make
+    runq "rm -r build_android"
+    runq "mkdir build_android"
+    runq "cd build_android"
+    runq "cmake -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake -DANDROID_ABI=$outputFolder -DANDROID_NATIVE_API_LEVEL=$API -DCMAKE_BUILD_TYPE=$BuildType -DOPENSSL_CRYPTO_LIBRARY=${ANDROID}/$outputFolder/lib -DOPENSSL_INCLUDE_DIR=${ANDROID}/$outputFolder/include --config $BuildType -B. -S.."
+    runq make
 
     if [[ $? != 0 ]]; then
-        echo "[ERROR] Make failed"
+        warning "[ERROR] Make failed"
         exit 1
     fi
 
-    echo "Build successful."
+    comment "${outputFolder} build successful"
 
-    mkdir -p /opt/fuzzy-lib/$outputFolder/lib
-    cp ./*.so /opt/fuzzy-lib/$outputFolder/lib
-    cp ./*.a /opt/fuzzy-lib/$outputFolder/lib
-    cp -r ./include /opt/fuzzy-lib/$outputFolder/
+    runq "cp ./src/c++/fuzzyvault/*.so ${ANDROID}/$outputFolder/lib"
+    runq "cp ./src/c++/fuzzyvault/*.a ${ANDROID}/$outputFolder/lib"
+    runq "cp ../src/c++/fuzzyvault/fuzzy.h ${ANDROID}/$outputFolder/include/"
 
-    make clean
+    runq "cd .."
 }
-cd openssl
+cd $BUILD_SOURCESDIRECTORY
 
 buildLibraries android-arm
 buildLibraries android-x86_64
