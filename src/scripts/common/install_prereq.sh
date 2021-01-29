@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -else
+set -e
 runq "apt-get update -y"
 runq "apt-get upgrade -y"
 runq "apt-get dist-upgrade -y"
