@@ -1,4 +1,5 @@
 #!/bin/bash
+#!/bin/sh
 
 set -e
 clear
@@ -49,7 +50,7 @@ export -f dir_create
 export -f install
 
 export BUILD_PLATFORM=wasm
-export OPENSSL_MINOR_VERSION=alpha10
+export OPENSSL_MINOR_VERSION=alpha8
 export OPENSSL_DIR="/opt/fuzzy_openssl30_${OPENSSL_MINOR_VERSION}_${BUILD_PLATFORM}"
 export FUZZY_LIB_WASM_DIR="/opt/fuzzy_lib_${BUILD_PLATFORM}"
 
@@ -69,7 +70,8 @@ export CMAKE_VERSION=$(cmake --version | grep version | awk '{print $3}')
 export TARGET_OPENSSL_SUBDIR="openssl-3.0.0-${OPENSSL_MINOR_VERSION}"
 
 EMSCRIPTEN_DIR=$PREREQ_BUILD_DIR/emscripten_openssl
-OPENSSL_SOURCE_DIR=$PREREQ_BUILD_DIR/$TARGET_OPENSSL_SUBDIR
+# OPENSSL_SOURCE_DIR=$PREREQ_BUILD_DIR/$TARGET_OPENSSL_SUBDIR
+OPENSSL_SOURCE_DIR=$PREREQ_BUILD_DIR/openssl
 EMSCRIPTEN_BIN_DIR=$PREREQ_BUILD_DIR/emsdk/upstream/emscripten
 EMSCRIPTEN_OPENSSL_INCLUDE_DIR=$EMSCRIPTEN_DIR/system/include
 EMSCRIPTEN_OPENSSL_LIB_DIR=$EMSCRIPTEN_DIR/system/lib
@@ -134,8 +136,17 @@ runq "./emsdk install latest"
 runq "./emsdk activate latest"
 runq ". ./emsdk_env.sh"
 run "cd $PREREQ_BUILD_DIR"
-runq "wget https://www.openssl.org/source/openssl-3.0.0-alpha10.tar.gz"
-runq "tar xfvz ./openssl-3.0.0-alpha10.tar.gz"
+
+# runq "wget https://www.openssl.org/source/openssl-3.0.0-alpha10.tar.gz"
+# runq "tar xfvz ./openssl-3.0.0-alpha10.tar.gz"
+
+runq "rm -rf openssl"
+run "git clone https://github.com/openssl/openssl.git"
+runq "cd openssl"
+
+printf "${YELLOW}$ git checkout tags/openssl-3.0.0-${OPENSSL_MINOR_VERSION}${NC}\n"
+git checkout tags/openssl-3.0.0-${OPENSSL_MINOR_VERSION}
+
 dir_create $EMSCRIPTEN_OPENSSL_LIB_DIR
 dir_create $EMSCRIPTEN_OPENSSL_INCLUDE_DIR
 runq "cd $OPENSSL_SOURCE_DIR"
@@ -182,11 +193,6 @@ ${EMSCRIPTEN_BIN_DIR}/emcc -v \
 
 if [[ $? != 0 ]]; then
     printf "${RED}build failed${NC}\n"
-    exit 2
-fi
-
-if [[ $? != 0 ]]; then
-    printf "${RED}build failed${NC}\n"
     exit 3
 fi
 
@@ -199,5 +205,3 @@ if [[ $? != 0 ]]; then
 else
     comment "build verification test passed"
 fi
-
-exit 0

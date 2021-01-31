@@ -85,7 +85,7 @@ cd $LINUX_DIR
 # echo
 
 export BUILD_PLATFORM=linux
-export OPENSSL_MINOR_VERSION=alpha10
+export OPENSSL_MINOR_VERSION=alpha8
 export OPENSSL_DIR="/opt/fuzzy_openssl30_${OPENSSL_MINOR_VERSION}_${BUILD_PLATFORM}"
 export FUZZY_LIB_DIR="/opt/fuzzy-lib_${BUILD_PLATFORM}"
 export CMAKE_BUILD_DIR=$ROOT_DIR/build_$BUILD_PLATFORM
@@ -110,7 +110,7 @@ else
     fi
 fi
 
-printf "${YELLOW}This script takes up to two hours to complete. Be patient ...${NC}\n"
+printf "${YELLOW}This script takes up to two hours to complete on my machine. Be patient ...${NC}\n"
 comment
 comment "script variable values:"
 comment

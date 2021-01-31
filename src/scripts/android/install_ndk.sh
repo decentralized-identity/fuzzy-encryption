@@ -1,7 +1,9 @@
 #!/bin/bash
 #!/bin/sh
 
-comment "install_ndk.sh"
+comment
+comment "    install_ndk.sh"
+comment
 
 which unzip > /dev/null
 if [[ $? != 0 ]]; then
@@ -14,6 +16,7 @@ sha=bcf4023eb8cb6976a4c7cff0a8a8f145f162bf4d
 if [ ! -e $filename ]; then
     runq "wget https://dl.google.com/android/repository/$filename"
 fi
+
 comment "checking the hash of ${filename} ..."
 actual=$(openssl sha1 -hex $filename | sed -E "s/SHA1\($filename\)= //" )
 if [[ $sha != $actual ]]; then 
@@ -24,11 +27,11 @@ else
     comment "File verified SHA1($actual)"
 fi
 
-if [ -d "/opt/android-sdk/ndk/" ]; then
-    runq "rm -rf /opt/android-sdk/ndk/"
+if [ -d "${NDK_DIR}" ]; then
+    runq "rm -rf ${NDK_DIR}"
 fi
-runq "mkdir -p /opt/android-sdk/ndk/"
-runq "unzip $filename -d /opt/android-sdk/ndk/"
+runq "mkdir -p ${NDK_DIR}"
+runq "unzip $filename -d ${NDK_DIR}"
 
 if [[ $? != 0 ]]; then
     warning "failed to unzip ${filename}"

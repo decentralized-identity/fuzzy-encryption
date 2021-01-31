@@ -1,13 +1,9 @@
 #!/bin/bash
 #!/bin/sh
 
-set -e
-comment "build_android.sh"
-
-# ARGUMENTS 
-# Set this to your minSdkVersion.
-export API=$1
-export BuildType=$2
+comment
+comment "    build_android.sh"
+comment
 
 if [ -z $BUILD_SOURCESDIRECTORY ]; then 
     BUILD_SOURCESDIRECTORY='../../..'
@@ -34,7 +30,9 @@ export PATH=$TOOLCHAIN/bin:$NDK/toolchains/arm-linux-androideabi-4.9/prebuilt/$H
 
 function buildLibraries {
     abi=$1
-    comment "build_android.buildLibraries $abi"
+    comment
+    comment "   build_android.buildLibraries $abi"
+    comment
     outputFolder=""
     if [[ $abi == "android-arm" ]]; then
         export TARGET=armv7a-linux-androideabi
@@ -53,20 +51,26 @@ function buildLibraries {
         return
     fi
 
-    # Configure and build.
-    # export AR=$TOOLCHAIN/bin/$TARGET-ar
-    # export AS=$TOOLCHAIN/bin/$TARGET-as
-    # export CC=$TOOLCHAIN/bin/$TARGET$API-clang
-    # export CXX=$TOOLCHAIN/bin/$TARGET$API-clang++
-    # export LD=$TOOLCHAIN/bin/$TARGET-ld
-    # export RANLIB=$TOOLCHAIN/bin/$TARGET-ranlib
-    # export STRIP=$TOOLCHAIN/bin/$TARGET-strip
-    # export NM=$TOOLCHAIN/bin/$TARGET-nm
-
+    runq "cd ${BUILD_SOURCEDIRECTORY}"
     runq "rm -r build_android"
     runq "mkdir build_android"
     runq "cd build_android"
-    runq "cmake -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake -DANDROID_ABI=$outputFolder -DANDROID_NATIVE_API_LEVEL=$API -DCMAKE_BUILD_TYPE=$BuildType -DOPENSSL_CRYPTO_LIBRARY=${ANDROID}/$outputFolder/lib -DOPENSSL_INCLUDE_DIR=${ANDROID}/$outputFolder/include --config $BuildType -B. -S.."
+
+    local ARG1="-DCMAKE_TOOLCHAIN_FILE=${ANDROID_NDK_HOME}/build/cmake/android.toolchain.cmake"
+    local ARG2="-DANDROID_ABI=${outputFolder}"
+    local ARG3="-DANDROID_NATIVE_API_LEVEL=${API}"
+    local ARG4="-DCMAKE_BUILD_TYPE=${BUILD}"
+    local ARG5="-DOPENSSL_CRYPTO_LIBRARY=${ANDROID_OPENSSL_DIR}/${outputFolder}/lib"
+    local ARG6="-DOPENSSL_INCLUDE_DIR=${ANDROID_OPENSSL_DIR}/${outputFolder}/include"
+    local ARG7="--config ${BUILD}"
+    local ARG8="-B."
+    local ARG9="-S.."
+    local ARGS="${ARG1} ${ARG2} ${ARG3} ${ARG4} ${ARG5} ${ARG6} ${ARG7} ${ARG8} ${ARG9}"
+    
+    runq "cmake $ARGS"
+
+    # runq "cmake -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake -DANDROID_ABI=$outputFolder -DANDROID_NATIVE_API_LEVEL=$API -DCMAKE_BUILD_TYPE=$BUILD -DOPENSSL_CRYPTO_LIBRARY=${ANDROID_OPENSSL_DIR}/$outputFolder/lib -DOPENSSL_INCLUDE_DIR=${ANDROID_OPENSSL_DIR}/$outputFolder/include --config $BUILD -B. -S.."
+    
     runq make
 
     if [[ $? != 0 ]]; then
@@ -74,11 +78,9 @@ function buildLibraries {
         exit 1
     fi
 
-    comment "${outputFolder} build successful"
-
-    runq "cp ./src/c++/fuzzyvault/*.so ${ANDROID}/$outputFolder/lib"
-    runq "cp ./src/c++/fuzzyvault/*.a ${ANDROID}/$outputFolder/lib"
-    runq "cp ../src/c++/fuzzyvault/fuzzy.h ${ANDROID}/$outputFolder/include/"
+    runq "cp ./src/c++/fuzzyvault/*.so ${ANDROID_LIB_DIR}/$outputFolder/lib"
+    runq "cp ./src/c++/fuzzyvault/*.a ${ANDROID_LIB_DIR}/$outputFolder/lib"
+    runq "cp ../src/c++/fuzzyvault/fuzzy.h ${ANDROID_LIB_DIR}/$outputFolder/include/"
 
     runq "cd .."
 }
