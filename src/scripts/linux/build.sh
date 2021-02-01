@@ -22,7 +22,7 @@ function runq {
 # print then run command but pipe stdout and stderr to null
 function runqs {
     printf "${YELLOW}$ ${1}${NC}\n"
-    eval "sudo ${1} 1> /dev/null 2> /dev/null"
+    eval "sudo ACCEPT_EULA=Y ${1} 1> /dev/null 2> /dev/null"
 }
 
 
