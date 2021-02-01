@@ -50,6 +50,7 @@ function install {
 
 export -f run
 export -f runq
+export -f runqs
 export -f comment
 export -f dir_create
 export -f install

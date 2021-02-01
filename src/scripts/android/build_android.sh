@@ -55,6 +55,9 @@ function buildLibraries {
     runq "rm -r build_android"
     runq "mkdir build_android"
     runq "cd build_android"
+    
+    runq "mkdir -p ${ANDROID_LIB_DIR}/$outputFolder/lib"
+    runq "mkdir -p ${ANDROID_LIB_DIR}/$outputFolder/include" 
 
     local ARG1="-DCMAKE_TOOLCHAIN_FILE=${ANDROID_NDK_HOME}/build/cmake/android.toolchain.cmake"
     local ARG2="-DANDROID_ABI=${outputFolder}"
