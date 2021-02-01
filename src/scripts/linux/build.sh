@@ -19,6 +19,13 @@ function runq {
     eval "${1} 1> /dev/null 2> /dev/null"
 }
 
+# print then run command but pipe stdout and stderr to null
+function runqs {
+    printf "${YELLOW}$ ${1}${NC}\n"
+    eval "sudo ${1} 1> /dev/null 2> /dev/null"
+}
+
+
 # print a comment in green
 function comment {
     printf "${GREEN}${1}${NC}\n"
