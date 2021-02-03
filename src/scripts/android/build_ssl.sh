@@ -5,10 +5,11 @@ comment
 comment "    build_ssh.sh"
 comment
 
-runq "cd ${ANDROID_DIR}"
+runq "mkdir -p ${ANDROID_BUILD_DIR}"
+runq "cd ${ANDROID_BUILD_DIR}"
 runq "rm -rf openssl"
 run "git clone https://github.com/openssl/openssl.git"
-runq "cd ${OPENSSL_DIR}"
+run "cd ${ANDROID_OPENSSL_DIR}"
 
 printf "${YELLOW}$ git checkout tags/openssl-3.0.0-${OPENSSL_MINOR_VERSION}${NC}\n"
 git checkout tags/openssl-3.0.0-${OPENSSL_MINOR_VERSION}
@@ -19,8 +20,6 @@ if [ -z $API ]; then
 fi
 
 # Please refer to https://developer.android.com/ndk/guides/other_build_systems#autoconf for documentation
-
-
 
 function buildLibraries {
     abi=$1
@@ -62,7 +61,7 @@ function buildLibraries {
     runq "cp -r ./include ${ANDROID_OPENSSL_DIR}/$outputFolder/"
 }
 
-runq "cd ${OPENSSL_DIR}"
+runq "cd ${ANDROID_OPENSSL_DIR}"
 
 buildLibraries android-arm
 buildLibraries android-x86_64

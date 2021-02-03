@@ -69,8 +69,7 @@ if [ -z $BUILD ]; then
 fi
 
 
-export ANDROID_DIR=$PWD
-export OPENSSL_DIR="${PWD}/openssl"
+export SCRIPT_DIR="${PWD}"
 export OPENSSL_MINOR_VERSION=alpha8
 export NDK=/opt/android-sdk/ndk/android-ndk-r21d
 export ANDROID_NDK_ROOT=$NDK
@@ -79,33 +78,34 @@ export HOST="linux-x86_64"
 export TOOLCHAIN=$NDK/toolchains/llvm/prebuilt/$HOST
 export PATH=$TOOLCHAIN/bin:$NDK/toolchains/arm-linux-androideabi-4.9/prebuilt/$HOST/bin:$PATH
 export ANDROID_LIB_DIR=/opt/fuzzy_lib_android
-export ANDROID_OPENSSL_DIR="${PWD}/openssl"
 export NDK_DIR=/opt/android-sdk/ndk
 
 cd "../../.."
+
 export BUILD_SOURCEDIRECTORY=$PWD
-cd $ANDROID_DIR
+export ANDROID_BUILD_DIR="${PWD}/build_android"
+export ANDROID_OPENSSL_DIR="${ANDROID_BUILD_DIR}/openssl"
+export ANDROID_APP_BUILD_DIR=${ANDROID_BUILD_DIR}/build_app
+
+cd $SCRIPT_DIR
 
 comment
 comment "API                    ${API}"
 comment "BUILD                  ${BUILD}"
-comment "ANDROID_DIR            ${ANDROID_DIR}"
-comment "OPENSSL_DIR            ${OPENSSL_DIR}"
-comment "OPENSSL_MINOR_VERSION  ${OPENSSL_MINOR_VERSION}"
-comment "NDK                    ${NDK}"
-comment "ANDROID_NDK_ROOT       ${ANDROID_NDK_ROOT}"
-comment "ANDROID_NDK_HOME       ${ANDROID_NDK_HOME}"
-comment "TOOLCHAIN              ${TOOLCHAIN}"
-comment "HOST                   ${HOST}"
-comment "PATH                   ${PATH}"
-comment "TOOLCHAIN              ${TOOLCHAIN}"
-comment "PATH                   ${PATH}"
+comment "ANDROID_APP_BUILD_DIR  ${ANDROID_APP_BUILD_DIR}"
+comment "ANDROID_BUILD_DIR      ${ANDROID_BUILD_DIR}"
 comment "ANDROID_LIB_DIR        ${ANDROID_LIB_DIR}"
 comment "ANDROID_OPENSSL_DIR    ${ANDROID_OPENSSL_DIR}"
-comment "NDK_DIR                ${NDK_DIR}"
+comment "ANDROID_NDK_ROOT       ${ANDROID_NDK_ROOT}"
+comment "ANDROID_NDK_HOME       ${ANDROID_NDK_HOME}"
 comment "BUILD_SOURCEDIRECTORY  ${BUILD_SOURCEDIRECTORY}"
-
+comment "HOST                   ${HOST}"
+comment "NDK                    ${NDK}"
+comment "NDK_DIR                ${NDK_DIR}"
+comment "OPENSSL_MINOR_VERSION  ${OPENSSL_MINOR_VERSION}"
+comment "PATH                   ${PATH}"
+comment "TOOLCHAIN              ${TOOLCHAIN}"
 
 bash install_ndk.sh
-bash build_ssl.sh $API $BUILD
-bash build_android.sh $API $BUILD
+bash build_ssl.sh
+bash build_android.sh

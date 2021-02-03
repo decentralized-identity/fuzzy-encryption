@@ -1,1 +1,0 @@
-g++ -o demo demo.cpp -L/mnt/b/Projects/Fuzzy-KeyRecovery/dev/kirko/code/cpp -lfuzzyvault -lssl -lcrypto

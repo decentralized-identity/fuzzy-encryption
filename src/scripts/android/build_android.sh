@@ -5,29 +5,6 @@ comment
 comment "    build_android.sh"
 comment
 
-if [ -z $BUILD_SOURCESDIRECTORY ]; then 
-    BUILD_SOURCESDIRECTORY='../../..'
-fi
-
-if [ -z $API ]; then
-    echo "No API version was provided"
-    exit 1
-fi
-
-# androidtoolsdir
-# /opt/android-sdk
-
-# Please refer to https://developer.android.com/ndk/guides/other_build_systems#autoconf for documentation
-
-NDK=/opt/android-sdk/ndk/android-ndk-r21d
-export ANDROID_NDK_ROOT=$NDK
-export ANDROID_NDK_HOME=$NDK
-HOST="linux-x86_64"
-
-export TOOLCHAIN=$NDK/toolchains/llvm/prebuilt/$HOST
-# export SYSROOT=$TOOLCHAIN/sysroot
-export PATH=$TOOLCHAIN/bin:$NDK/toolchains/arm-linux-androideabi-4.9/prebuilt/$HOST/bin:$PATH
-
 function buildLibraries {
     abi=$1
     comment
@@ -51,10 +28,8 @@ function buildLibraries {
         return
     fi
 
-    runq "cd ${BUILD_SOURCEDIRECTORY}"
-    runq "rm -r build_android"
-    runq "mkdir build_android"
-    runq "cd build_android"
+    dir_create "${ANDROID_APP_BUILD_DIR}"
+    runq "cd ${ANDROID_APP_BUILD_DIR}"
     
     runq "mkdir -p ${ANDROID_LIB_DIR}/$outputFolder/lib"
     runq "mkdir -p ${ANDROID_LIB_DIR}/$outputFolder/include" 
@@ -67,27 +42,21 @@ function buildLibraries {
     local ARG6="-DOPENSSL_INCLUDE_DIR=${ANDROID_OPENSSL_DIR}/${outputFolder}/include"
     local ARG7="--config ${BUILD}"
     local ARG8="-B."
-    local ARG9="-S.."
+    local ARG9="-S ${BUILD_SOURCEDIRECTORY}"
+
     local ARGS="${ARG1} ${ARG2} ${ARG3} ${ARG4} ${ARG5} ${ARG6} ${ARG7} ${ARG8} ${ARG9}"
-    
     runq "cmake $ARGS"
 
-    # runq "cmake -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake -DANDROID_ABI=$outputFolder -DANDROID_NATIVE_API_LEVEL=$API -DCMAKE_BUILD_TYPE=$BUILD -DOPENSSL_CRYPTO_LIBRARY=${ANDROID_OPENSSL_DIR}/$outputFolder/lib -DOPENSSL_INCLUDE_DIR=${ANDROID_OPENSSL_DIR}/$outputFolder/include --config $BUILD -B. -S.."
-    
     runq make
-
     if [[ $? != 0 ]]; then
         warning "[ERROR] Make failed"
         exit 1
     fi
 
-    runq "cp ./src/c++/fuzzyvault/*.so ${ANDROID_LIB_DIR}/$outputFolder/lib"
-    runq "cp ./src/c++/fuzzyvault/*.a ${ANDROID_LIB_DIR}/$outputFolder/lib"
-    runq "cp ../src/c++/fuzzyvault/fuzzy.h ${ANDROID_LIB_DIR}/$outputFolder/include/"
-
-    runq "cd .."
+    run "cp ./src/c++/fuzzyvault/*.so ${ANDROID_LIB_DIR}/$outputFolder/lib"
+    run "cp ./src/c++/fuzzyvault/*.a ${ANDROID_LIB_DIR}/$outputFolder/lib"
+    run "cp ${BUILD_SOURCEDIRECTORY}/src/c++/fuzzyvault/fuzzy.h ${ANDROID_LIB_DIR}/$outputFolder/include/"
 }
-cd $BUILD_SOURCESDIRECTORY
 
 buildLibraries android-arm
 buildLibraries android-x86_64
