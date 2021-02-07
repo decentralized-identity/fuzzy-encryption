@@ -1,4 +1,3 @@
-# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
 
 cmake_minimum_required (VERSION 3.13.4)
@@ -6,7 +5,7 @@ cmake_minimum_required (VERSION 3.13.4)
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 
-set(RELEASE_CFLAGS "-O3 -mtune=intel -DNDEBUG" CACHE STRING "C compiler options for release builds")
+set(RELEASE_CFLAGS "-O3 -DNDEBUG" CACHE STRING "C compiler options for release builds")
 set(CMAKE_C_FLAGS_DEBUG "-Og -D_FORTIFY_SOURCE -fstack-protector-strong")
 set(CMAKE_C_FLAGS_RELEASE ${RELEASE_CFLAGS})
 set(CMAKE_CXX_FLAGS_RELEASE ${RELEASE_CFLAGS})
